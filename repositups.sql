@@ -2376,7 +2376,34 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `vw_userroledistribution`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `vw_userroledistribution`  AS WITH AllRoles AS (SELECT 'Administrator' AS `role` UNION SELECT 'MCIIS Staff' AS `MCIIS Staff` UNION SELECT 'Faculty' AS `Faculty` UNION SELECT 'Student' AS `Student`) SELECT `ar`.`role` AS `role`, count(`u`.`userID`) AS `totalUsers` FROM (`allroles` `ar` left join `user` `u` on(`ar`.`role` = `u`.`role`)) GROUP BY `ar`.`role` ORDER BY CASE `ar`.`role` WHEN 'Administrator' THEN 1 WHEN 'MCIIS Staff' THEN 2 WHEN 'Faculty' THEN 3 WHEN 'Student' THEN 4 END AS `ASCend` ASC  ;
+CREATE ALGORITHM=UNDEFINED 
+DEFINER=`root`@`localhost` 
+SQL SECURITY DEFINER 
+VIEW `vw_userroledistribution` AS
+WITH AllRoles AS (
+    SELECT 'Administrator' AS `role`
+    UNION 
+    SELECT 'MCIIS Staff'
+    UNION 
+    SELECT 'Faculty'
+    UNION 
+    SELECT 'Student'
+)
+SELECT 
+    ar.role AS role,
+    COUNT(u.userID) AS totalUsers
+FROM AllRoles ar
+LEFT JOIN `user` u 
+    ON ar.role = u.role
+GROUP BY ar.role
+ORDER BY 
+    CASE ar.role
+        WHEN 'Administrator' THEN 1
+        WHEN 'MCIIS Staff'   THEN 2
+        WHEN 'Faculty'       THEN 3
+        WHEN 'Student'       THEN 4
+    END;
+
 
 --
 -- Indexes for dumped tables
